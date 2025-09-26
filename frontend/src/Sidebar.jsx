@@ -40,7 +40,7 @@ function Sidebar() {
     <div className="fixed top-0 left-0 h-screen w-30 
                     flex flex-col shadow-2xl
                     pt-4">
-      <h1 className="p-2 text-center text-[3vh] text-primary font-poppins font-bold">ILC<a className="text-black">Sense</a></h1>
+      <h1 className="p-2 text-center text-[3vh] text-primary font-poppinsbold">ILC<a className="text-black">Sense</a></h1>
       <SidebarIcon
         label="home"
         active={active}
