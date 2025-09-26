@@ -7,6 +7,7 @@ import Sort from "../Buttons/Sort.jsx";
 import Filters from "../Buttons/Filters.jsx";
 import Card from "../Card.jsx";
 import Add from "../Buttons/Add.jsx";
+import Details from '../Details.jsx';
 
 const API_URL = 'http://127.0.0.1:8000'; // Your backend URL
 
@@ -16,6 +17,12 @@ function ContractList() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
+    // const handleCardClick = (documentId) => {
+    //     // This log will show when the click handler is called
+    //     console.log('Card clicked! Setting selected ID to:', documentId); 
+    //     setSelectedContractId(documentId);
+    // };
+    const [selectedContractId, setSelectedContractId] = useState(null);
     // This useEffect hook will run once when the component is first rendered
     useEffect(() => {
         const fetchContracts = async () => {
@@ -35,7 +42,15 @@ function ContractList() {
 
         fetchContracts();
     }, []); // The empty array [] ensures this runs only once
+    const handleCardClick = (documentId) => {
+        setSelectedContractId(documentId);
+    };
+    // console.log('Current selected ID is:', selectedContractId);
+    
 
+    const handleCloseDetails = () => {
+        setSelectedContractId(null);
+    };
     // --- Conditional Rendering ---
     // Show a loading message while fetching data
     if (loading) {
@@ -49,25 +64,46 @@ function ContractList() {
 
     return (
         <div className="mt-5 ml-53 p-6 relative">
-            <h1 className="text-2xl font-bold">Contract List</h1>
-            <SearchBar />
-            <Filters />
-            <div className="flex justify-between ">
-                <Sort />
-                <Add />
+            <div className="flex-grow">
+                <h1 className="text-2xl font-bold">Contract List</h1>
+                <SearchBar />
+                <Filters />
+                <div className="flex justify-between ">
+                    <Sort />
+                    <Add />
+                </div>
+                
+                {/* --- DYNAMIC CARD LIST --- */}
+                {/* We map over the 'contracts' array from our state. */}
+                {/* For each 'contract' object in the array, we render one <Card /> component. */}
+                
+
+                {contracts.map(contract => (
+                    <Card
+                        key={contract.documentId}
+                        // From contractMetadata
+                        judul_kontrak={contract.analysis?.contractMetadata?.documentTitle}
+                        kategori={contract.analysis?.contractMetadata?.documentType}
+
+                        // From contractSummarization
+                        nama_perusahaan={contract.analysis?.contractSummarization?.parties[0]?.name}
+                        perihal_kontrak={contract.analysis?.contractSummarization?.executiveSummary}
+                        lokasi={contract.analysis?.contractSummarization?.contractLocation}
+                        status={contract.analysis?.contractSummarization?.contractStatus}
+                        periode={contract.analysis?.contractSummarization?.contractPeriod}
+                        value={contract.analysis?.contractSummarization?.contractValue}
+                        // Pass the click handler to each card
+                        onCardClick={() => handleCardClick(contract.documentId)}
+
+                    />
+                ))}
             </div>
-            
-            {/* --- DYNAMIC CARD LIST --- */}
-            {/* We map over the 'contracts' array from our state. */}
-            {/* For each 'contract' object in the array, we render one <Card /> component. */}
-            {contracts.map(contract => (
-                <Card
-                    key={contract.documentId}
-                    judul_kontrak={contract.analysis.contractMetadata.documentTitle}
-                    kategori={contract.analysis.contractMetadata.documentType}
-                    // The rest of the props will use the default values from your Card component for now
-                />
-            ))}
+            {selectedContractId && (
+                    <Details 
+                        documentId={selectedContractId} 
+                        onClose={handleCloseDetails} 
+                    />
+            )}
         </div>
     );
 }

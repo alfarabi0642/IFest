@@ -27,6 +27,12 @@ SCHEMA_TEMPLATE = {
         "parties": [
             {"name": "", "role": "", "contactInfo": ""}
         ],
+        # --- NEW FIELDS ADDED HERE ---
+        "contractValue": "",          # e.g., "IDR 20.000.000", "USD 5,000 / month"
+        "contractPeriod": "",         # e.g., "1 Sep - 1 Okt 2025", "3 years from signing"
+        "contractStatus": "",         # e.g., "Approved", "Under Review", "Unapproved"
+        "contractLocation": "",       # e.g., "Bandung, Indonesia", "Jakarta"
+        # ---------------------------
         "keyTerms": [
             {"term": "", "definition": ""}
         ],
@@ -80,9 +86,11 @@ def analyze_contract_text(contract_text: str, contract_name: str) -> str:
     1. Output must be a single valid JSON object.  
     2. JSON must exactly follow the provided schema (all keys must appear).  
     3. If information is missing, use null. 
-    4. Do not add explanations or extra text outside JSON.  
-    5. riskCategory is the specific type or nature of the risk (e.g., Financial, Legal, Operational).
-    6. riskLevel is the severity of the risk, color-coded for quick identification. Only filled with "Green" for low risk, "Yellow" for medium risk, and "Red" for high risk
+    4. Do not add explanations or extra text outside JSON.
+    5. On "ContractValue" only uses Rp, Numbers, and separate thousands (3 digits).
+    6. On "ContractPeriod" only uses format <tanggal bulan> - <tanggal bulan>.
+    7. riskCategory is the specific type or nature of the risk (e.g., Financial, Legal, Operational).
+    8. riskLevel is the severity of the risk, color-coded for quick identification. Only filled with "Green" for low risk, "Yellow" for medium risk, and "Red" for high risk
 
     {json.dumps(SCHEMA_TEMPLATE, indent=2)}
 

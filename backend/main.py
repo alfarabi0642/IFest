@@ -91,14 +91,25 @@ async def upload_contract(background_tasks: BackgroundTasks, file: UploadFile = 
 
     return {"message": "File uploaded successfully. Processing has started in the background."}
 
+# In your main.py file
+
+# In your main.py file
+
 @app.get("/contracts")
 async def get_all_contracts():
     """
-    Retrieves a list of all processed contracts.
+    Retrieves a list of all processed contracts with enhanced summary data.
     """
-    # Project only the necessary fields to avoid sending large amounts of data
-    contracts = list(db.contracts.find({}, {"_id": 1, "analysis.contractMetadata": 1, "created_at": 1}))
-    # Convert ObjectId to string for JSON serialization
+    # We now project the entire contractSummarization object to get all needed fields
+    projection = {
+        "_id": 1,
+        "created_at": 1,
+        "analysis.contractMetadata": 1,
+        "analysis.contractSummarization": 1, # <-- This gets all the new fields
+    }
+    contracts = list(db.contracts.find({}, projection))
+    
+    # Process the results for the frontend
     for contract in contracts:
         contract["documentId"] = contract.pop("_id")
         if 'created_at' in contract:
@@ -110,9 +121,19 @@ async def get_contract_details(document_id: str):
     """
     Retrieves the full analysis details for a specific contract by its ID.
     """
-    contract = db.contracts.find_one({"_id": document_id}, {"_id": 0, "analysis": 1})
-    if contract:
-        return contract.get("analysis")
+    # Find the document by its string ID
+    contract_data = db.contracts.find_one({"_id": document_id})
+    
+    if contract_data:
+        # The 'analysis' field contains all the JSON data we need
+        analysis_details = contract_data.get("analysis")
+        if analysis_details:
+            return analysis_details
+        else:
+            # Handle case where the document exists but has no analysis field
+            raise HTTPException(status_code=404, detail="Analysis details not found for this contract.")
+    
+    # Handle case where no contract with that ID was found
     raise HTTPException(status_code=404, detail=f"Contract with ID '{document_id}' not found.")
 
 # ... (other code) ...
