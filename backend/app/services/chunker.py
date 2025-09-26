@@ -17,7 +17,7 @@ full_document_text = ""
 
 txt_files = [f for f in os.listdir(OUTPUT_DIR) if f.endswith(".txt")]
 for file in txt_files:
-    doc_name = os.path.splitext(file)[0]
+    contract_name = os.path.splitext(file)[0]
     file_path = os.path.join(OUTPUT_DIR, file)
     with open(file_path, "r", encoding="utf-8", errors="ignore") as f:
         full_document_text += f.read() + "\n"
@@ -43,7 +43,7 @@ text_splitter = RecursiveCharacterTextSplitter(
 )
 
 # Split the document into text chunks
-print(f"--- Splitting document '{doc_name}' into chunks... ---")
+print(f"--- Splitting document '{contract_name}' into chunks... ---")
 chunks = text_splitter.split_text(full_document_text)
 print(f"--- Document split into {len(chunks)} chunks. ---")
 
@@ -74,7 +74,8 @@ print("--- Finished processing all chunks. ---\n")
 print("--- Assembling the final JSON object... ---")
 # Create the final, top-level dictionary that matches your desired format
 final_json_data = {
-    "doc_name": doc_name,
+    "contract_id": "",
+    "contract_name": "",
     "chunks": chunk_list_for_json
 }
 
@@ -86,7 +87,7 @@ print(json.dumps(final_json_data, indent=2))
 
 # Now you can save this single object to a database or file
 # Example: Saving to a JSON file
-output_filename = f"{doc_name}.json"
+output_filename = f"{contract_name}.json"
 json_path = os.path.join(JSON_OUTPUT_DIR, output_filename)
 with open(json_path, "w", encoding="utf-8") as f:
     json.dump(final_json_data, f, ensure_ascii=False, indent=2)

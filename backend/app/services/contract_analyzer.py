@@ -6,6 +6,16 @@ import re
 from database import db
 from datetime import datetime, timezone
 
+OUTPUT_DIR = "output"
+JSON_OUTPUT_DIR = "json"
+contract_text = ""
+
+txt_files = [f for f in os.listdir(OUTPUT_DIR) if f.endswith(".txt")]
+for file in txt_files:
+    doc_name = os.path.splitext(file)[0]
+    file_path = os.path.join(OUTPUT_DIR, file)
+    with open(file_path, "r", encoding="utf-8", errors="ignore") as f:
+        contract_text += f.read() + "\n"
 
 endpoint = "https://13524-mfzrpl5t-eastus2.cognitiveservices.azure.com/"
 model_name = "gpt-5-mini"
@@ -73,13 +83,6 @@ SCHEMA_TEMPLATE = {
     }
 }
 
-# --- Example contract text ---
-contract_text = """
-This Master Services Agreement is entered into by Innovate Corp and Global Tech Inc.
-The Service Provider agrees to indemnify and hold harmless the Client against all claims of IP infringement.
-Client shall pay all invoices within 30 days of receipt, with a penalty for late payments.
-"""
-
 # --- Prompt instructing AI to return schema ---
 prompt = f"""
 You are a contract analysis assistant.
@@ -115,7 +118,7 @@ def extract_json(text: str, fallback_schema: dict):
         return json.loads(raw_json)
 
     except Exception as e:
-        print("⚠️ AI output not valid JSON, using fallback:", e)
+        print("AI output not valid JSON, using fallback:", e)
         return fallback_schema
 
 # --- Parse safely ---
@@ -140,7 +143,7 @@ try:
     ai_output = extract_json(resp.choices[0].message.content, SCHEMA_TEMPLATE)
     final_doc = deep_merge(SCHEMA_TEMPLATE, ai_output)
 except Exception as e:
-    print("⚠️ AI output not valid JSON, fallback to empty schema:", e)
+    print("AI output not valid JSON, fallback to empty schema:", e)
     ai_output = {}
 # --- Merge with schema (fill missing fields) ---
 def deep_merge(template, data):
@@ -163,7 +166,7 @@ def deep_merge(template, data):
 final_doc = deep_merge(SCHEMA_TEMPLATE, ai_output)
 
 # ---------------- Auto-generate Contract ID ----------------
-next_id = db.contracts_col.count_documents({}) + 1
+next_id = db.contracts.count_documents({}) + 1
 document_id = f"DOC{next_id:04d}"  # e.g., DOC0001, DOC0002
 
 now = datetime.now(timezone.utc)
@@ -174,28 +177,15 @@ final_doc["contractMetadata"]["processingTimestamp"] = now.isoformat()
 
 # ---------------- Insert into MongoDB ----------------
 # 1. Main contracts collection
-db.contracts_col.insert_one({
+db.contracts.insert_one({
     "raw_text": contract_text,
     "analysis": final_doc,
     "created_at": now
 })
 
 # 2. Summaries collection (cross-reference)
-db.summaries_col.insert_one({
-    "documentId": document_id,
-    "executiveSummary": final_doc["contractSummarization"]["executiveSummary"],
-    "parties": final_doc["contractSummarization"]["parties"],
-    "created_at": now
-})
 
-# 3. Risks collection (cross-reference)
-db.risks_col.insert_one({
-    "documentId": document_id,
-    "clauses": final_doc["clauseLevelRiskAndCompliance"]["clauses"],
-    "created_at": now
-})
+print(f"Contract {document_id} inserted into contracts, summaries, and risks!")
 
-print(f"✅ Contract {document_id} inserted into contracts, summaries, and risks!")
-
-print("✅ Final structured contract JSON:")
+print("Final structured contract JSON:")
 print(json.dumps(final_doc, indent=2))
