@@ -73,8 +73,19 @@ def analyze_contract_text(contract_text: str, contract_name: str) -> str:
     Analyzes contract text, stores results and embeddings in DB, and returns the document ID.
     """
     prompt = f"""
-    You are a contract analysis assistant. Read the contract text and return valid JSON strictly matching this schema:
+    You are a contract analysis assistant.  
+    Your task: extract structured information from the contract.  
+
+    Rules:  
+    1. Output must be a single valid JSON object.  
+    2. JSON must exactly follow the provided schema (all keys must appear).  
+    3. If information is missing, use null. 
+    4. Do not add explanations or extra text outside JSON.  
+    5. riskCategory is the specific type or nature of the risk (e.g., Financial, Legal, Operational).
+    6. riskLevel is the severity of the risk, color-coded for quick identification. Only filled with "Green" for low risk, "Yellow" for medium risk, and "Red" for high risk
+
     {json.dumps(SCHEMA_TEMPLATE, indent=2)}
+
     Contract:
     {contract_text}
     """

@@ -18,7 +18,7 @@ def get_embedding(text: str) -> list[float]:
 
 def create_and_store_embeddings(document_id: str, contract_name: str, full_document_text: str):
     """Splits a document into chunks, generates embeddings, and stores them in MongoDB."""
-    text_splitter = RecursiveCharacterTextSplitter(chunk_size=600, chunk_overlap=50)
+    text_splitter = RecursiveCharacterTextSplitter(chunk_size=1024, chunk_overlap=100)
     chunks = text_splitter.split_text(full_document_text)
     
     print(f"--- Document split into {len(chunks)} chunks. ---")
