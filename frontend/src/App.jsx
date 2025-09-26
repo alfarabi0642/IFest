@@ -1,9 +1,5 @@
 import { Routes, Route } from "react-router-dom"
-import { useNavigate } from "react-router-dom"
 
-import Card from "./Card.jsx"
-import Footer from "./Footer.jsx"
-import Button from "./Button.jsx"
 import Sidebar from './Sidebar.jsx'
 import HomePage from "./Pages/HomePage.jsx"
 import ContractList from "./Pages/ContractList.jsx"
@@ -17,9 +13,14 @@ function App() {
                 <Routes>
                     <Route path="/" element={<HomePage/>}/>
                     <Route path="/contracts" element={<ContractList/>} />
+                    {/*<Route path="/drafts" element={<ContractDraft/>} />
+                    <Route path="/reviews" element={<ContractReview/>} />
+                    <Route path="/notifications" element={<Notification/>} />
+                    <Route path="/reports" element={<Reports/>} />
+                    */}
                 </Routes>
             </div>
-            <Footer/>
+            {/* <Footer/> */ }
         </div>
     );
 

@@ -1,13 +1,17 @@
 import Search from "./assets/search_white.svg?react"
+import Filter from "./assets/filter.svg?react"
 
 function SearchBar(){
     return(
-        <form className="w-[440px] mt-3 relative ">
+        <form className="rounded-full shadow-lg w-170 mt-3 relative ">
             <div className="relative">
                 <input type="search" placeholder="Search by Company, Year..." className="w-full p-4
                         rounded-full bg-white"/>
-                <button className="absolute right-1 top-1/2 -translate-y-1/2 p-3.5 rounded-r-full bg-primary ">
+                <button className="absolute right-1 top-1/2 -translate-y-1/2 p-3.5 rounded-r-full bg-primary cursor-pointer">
                     <Search/>
+                </button>
+                <button className="absolute right-17 top-1/3 cursor-pointer">
+                    <Filter/>
                 </button>
             </div>
         </form>

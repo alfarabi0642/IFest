@@ -1,12 +1,19 @@
 import SearchBar from "../SearchBar.jsx";
 import Sort from "../Buttons/Sort.jsx";
+import Add from "../Buttons/Add.jsx";
+import Filters from "../Buttons/Filters.jsx";
 
 function ContractList(){
     return (
-        <div className="ml-20 p-6">
+        <div className="mt-5 ml-53 p-6">
             <h1 className="text-2xl font-bold">Contract List</h1>
             <SearchBar/>
-            <Sort/>
+            <Filters/>
+            <div className="flex justify-between">
+                <Sort/>
+                <Add/>
+            </div>
+            
         </div>
     );
 }
