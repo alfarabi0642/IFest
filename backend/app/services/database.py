@@ -24,8 +24,8 @@ db = client["ILCSense_db"]
 # --- Drop old collections ---
 db.users.drop()
 db.contracts.drop()
-db.summaries.drop()
-db.risk_highlights.drop()
+db.vector_store.drop()
+
 
 # ----------------- USERS TEMPLATE -----------------
 dummy_user = {
@@ -93,25 +93,12 @@ dummy_contract = {
 c_id = db.contracts.insert_one(dummy_contract).inserted_id
 db.contracts.delete_one({"_id": c_id})
 
-# ----------------- SUMMARIES TEMPLATE -----------------
-dummy_summary = {
-    "contract_id": "",
-    "summary": [],    # bullet list
-    "created_at": None
-}
-s_id = db.summaries.insert_one(dummy_summary).inserted_id
-db.summaries.delete_one({"_id": s_id})
+dummy_vec = {
+        "documentId": "",
+        "embedding": [],
+        
+    }
 
-# ----------------- RISKS TEMPLATE -----------------
-dummy_risk = {
-    "contract_id": "",
-    "clause": "",
-    "excerpt": "",
-    "severity": "",   # low | medium | high
-    "suggestion": "",
-    "created_at": None
-}
-r_id = db.risk_highlights.insert_one(dummy_risk).inserted_id
-db.risk_highlights.delete_one({"_id": r_id})
+v_id = db.vector_store.insert_one(dummy_vec).inserted_id
+db.vector_store.delete_one({"_id": v_id})
 
-print("✅ Database initialized with templates for users, contracts (rich JSON), summaries, and risks.")
