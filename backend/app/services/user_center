@@ -11,11 +11,12 @@ def add_user(username, email, role, password):
         "username": username,
         "email": email,
         "role": role,
-        "password_hash": (password),
+        "password": password,   # <-- FIXED (was password_hash)
         "created_at": datetime.now(timezone.utc)
     }
     db.users.insert_one(user)
     print(f"✅ User {username} added with role={role}")
+
 
 def require_role(allowed_roles):
     def wrapper(func):
@@ -39,9 +40,10 @@ def create_admin():
         "username": "admin",
         "email": "admin@example.com",
         "role": "admin",
-        "password_hash": ("admin123"),   # default password
+        "password": "admin123",   # <-- FIXED (was password_hash)
         "created_at": datetime.now(timezone.utc)
-    }
+}
+
     db.users.insert_one(admin_user)
     print("✅ Admin user created with username=admin, password=admin123")
 
@@ -51,19 +53,21 @@ def login(username, password):
     if not user:
         return {"success": False, "message": "User not found"}
     
-    # Direct comparison (not secure for prod)
-    if password == user["password"]:
+    # Try both keys
+    stored_pw = user.get("password") or user.get("password_hash")
+    
+    if stored_pw and password == stored_pw:
         current_user = user
         return {"success": True, "role": user["role"], "message": f"Welcome {username}"}
     
     return {"success": False, "message": "Invalid password"}
 
 
+
 def logout():
     global current_user
     current_user = None
     return "👋 Logged out"
-
 
 
 
