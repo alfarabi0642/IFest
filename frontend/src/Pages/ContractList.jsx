@@ -6,14 +6,15 @@ import Add from "../Buttons/Add.jsx";
 
 function ContractList(){
 
+
     return (
-        <div className="mt-5 ml-53 p-6">
+        <div className="mt-5 ml-53 p-6 relative">
             <h1 className="text-2xl font-bold">Contract List</h1>
             <SearchBar/>
             <Filters/>
-            <div className="flex justify-between">
+            <div className="flex justify-between ">
                 <Sort/>
-                <Add />
+                <Add/>
             </div>
             <Card/>
             <Card/>
