@@ -2,6 +2,7 @@ import SearchBar from "../SearchBar.jsx";
 import Sort from "../Buttons/Sort.jsx";
 import Add from "../Buttons/Add.jsx";
 import Filters from "../Buttons/Filters.jsx";
+import Card from "../Card.jsx";
 
 function ContractList(){
     return (
@@ -13,7 +14,11 @@ function ContractList(){
                 <Sort/>
                 <Add/>
             </div>
-            
+            <Card/>
+            <Card/>
+            <Card/>
+            <Card/>
+
         </div>
     );
 }

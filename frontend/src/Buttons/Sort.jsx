@@ -18,10 +18,10 @@ function Sort(){
             </div>
             {isOpen && (
                 <div>
-                    <div id="newest" className="hover:text-white flex items-center h-8 transition-all hover:bg-secondary rounded-full bg-white absolute top-15 border-1 w-40 border-gray-400 shadow-md">
+                    <div id="newest" className="hover:text-white flex items-center h-8 transition-all hover:bg-secondary rounded-full bg-white absolute top-12 border-1 w-40 border-gray-400 shadow-md">
                         <div className="cursor-pointer px-5 ">Newest</div>
                     </div>
-                    <div id="oldest" className="hover:text-white flex items-center h-8 transition-all hover:bg-secondary rounded-full bg-white absolute top-24 border-1 w-40 border-gray-400 shadow-md">
+                    <div id="oldest" className="hover:text-white flex items-center h-8 transition-all hover:bg-secondary rounded-full bg-white absolute top-21 border-1 w-40 border-gray-400 shadow-md">
                         <div className="cursor-pointer px-5 ">Oldest</div>
                     </div>
                 </div>

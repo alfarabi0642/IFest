@@ -1,6 +1,7 @@
 import { Routes, Route } from "react-router-dom"
 
 import Sidebar from './Sidebar.jsx'
+import Details from "./Details.jsx"
 import HomePage from "./Pages/HomePage.jsx"
 import ContractList from "./Pages/ContractList.jsx"
 
@@ -20,6 +21,7 @@ function App() {
                     */}
                 </Routes>
             </div>
+            <Details/>
             {/* <Footer/> */ }
         </div>
     );

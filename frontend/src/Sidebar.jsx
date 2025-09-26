@@ -48,9 +48,9 @@ function Sidebar() {
     <div className="fixed top-0 left-0 h-screen w-[35vh] 
                    flex flex-col shadow-2xl
                    pt-4 bg-white">
-      <h1 className="p-2 text-center text-[4.5vh] text-primary font-poppinsbold">ILC<a className="text-black">Sense</a></h1>
+      <h1 className="p-2 mt-2 text-center text-[5vh] text-primary font-poppinsbold">ILC<a className="text-black">Sense</a></h1>
       
-      <nav className="mt-4">
+      <nav className="mt-1">
         {sidebarItems.map((item) => (
           <SidebarItem
             key={item.label}
@@ -65,7 +65,7 @@ function Sidebar() {
       </nav>
 
       <div className="mt-auto p-2">
-        <Profile />
+        <Profile username="Ishaq Irfan F" role="Contract Manager" />
       </div>
     </div>
   );
