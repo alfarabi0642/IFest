@@ -4,6 +4,7 @@ import Sidebar from './Sidebar.jsx'
 import Details from "./Details.jsx"
 import HomePage from "./Pages/HomePage.jsx"
 import ContractList from "./Pages/ContractList.jsx"
+import Login from "./Pages/Login.jsx"
 
 
 function App() {
@@ -22,7 +23,6 @@ function App() {
                 </Routes>
             </div>
             <Details/>
-            {/* <Footer/> */ }
         </div>
     );
 

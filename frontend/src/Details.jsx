@@ -31,11 +31,9 @@ function Details( {logo=defaultLogo,
             </div>
             <div className="mt-auto pt-6 text-center flex justify-center items-center">
                 <button className="font-poppinsbold bg-gradient-to-r from-secondary to-primary text-white py-2 px-8 rounded-3xl h-13">
-                    Download Contract
+                    Review Contract
                 </button>
-                <button>
-                    <img src=""></img>
-                </button>
+
             </div>
         </div>
     );
