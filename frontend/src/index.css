@@ -1,0 +1,30 @@
+@font-face {
+    font-family: Poppins;
+    src: url("../src/assets/fonts/Poppins-Regular.ttf");
+}
+
+@font-face {
+    font-family: Poppins_Bold;
+    src: url("../src/assets/fonts/Poppins-Bold.ttf");
+}
+
+@import "tailwindcss";
+
+@theme{
+    --font-poppins: Poppins, "sans-serif";
+    --color-primary: #5060FF;
+    --color-secondary: #8A94FF;
+    --font-poppinsbold: Poppins_Bold, "sans-serif"
+}
+
+@layer components{
+    .sidebar-icon{
+        @apply relative flex items-center justify-center 
+                h-12 w-12 mt-2 mb-2 mx-auto shadow-lg
+                hover:bg-amber-600;
+    }
+}
+
+body {
+    background-color: #F5F5FB;
+}

@@ -1,7 +1,7 @@
-
 import os
 import shutil
 from fastapi import FastAPI, File, UploadFile, HTTPException, BackgroundTasks
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from dotenv import load_dotenv
 from database import db
@@ -15,7 +15,22 @@ app = FastAPI(
     description="API for processing and querying legal contracts.",
     version="1.0.0"
 )
+# --- 2. ADD THE CORS MIDDLEWARE CONFIGURATION ---
 
+# List of origins that are allowed to make requests to this API.
+# The default port for Vite React apps is 5173. 3000 is for Create React App.
+origins = [
+    "http://localhost:5173",
+    "http://localhost:3000",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"], # Allow all methods (GET, POST, etc.)
+    allow_headers=["*"], # Allow all headers
+)
 # --- Pydantic Models for Request/Response Bodies ---
 class QueryRequest(BaseModel):
     query: str
