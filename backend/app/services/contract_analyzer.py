@@ -5,6 +5,8 @@ from copy import deepcopy
 import re
 from database import db
 from datetime import datetime, timezone
+from pymongo import MongoClient
+from chunker import chunker1
 
 OUTPUT_DIR = "output"
 JSON_OUTPUT_DIR = "json"
@@ -169,6 +171,9 @@ final_doc = deep_merge(SCHEMA_TEMPLATE, ai_output)
 next_id = db.contracts.count_documents({}) + 1
 document_id = f"DOC{next_id:04d}"  # e.g., DOC0001, DOC0002
 
+# Call chunker.py script
+chunker1(document_id)
+
 now = datetime.now(timezone.utc)
 final_doc["contractMetadata"]["documentId"] = document_id
 final_doc["contractMetadata"]["documentTitle"] = "Master Services Agreement"
@@ -189,3 +194,4 @@ print(f"Contract {document_id} inserted into contracts, summaries, and risks!")
 
 print("Final structured contract JSON:")
 print(json.dumps(final_doc, indent=2))
+
