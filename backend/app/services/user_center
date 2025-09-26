@@ -1,0 +1,70 @@
+from datetime import datetime, timezone
+from pymongo import MongoClient
+from database import db
+current_user = None
+
+
+def add_user(username, email, role, password):
+    if role not in ["admin", "staff", "manager"]:
+        raise ValueError("Invalid role")
+    user = {
+        "username": username,
+        "email": email,
+        "role": role,
+        "password_hash": (password),
+        "created_at": datetime.now(timezone.utc)
+    }
+    db.users.insert_one(user)
+    print(f"✅ User {username} added with role={role}")
+
+def require_role(allowed_roles):
+    def wrapper(func):
+        def inner(*args, **kwargs):
+            global current_user
+            if not current_user:
+                return "❌ Access denied: No user logged in"
+            if current_user["role"] not in allowed_roles:
+                return f"❌ Access denied: {current_user['role']} cannot perform this action"
+            return func(*args, **kwargs)
+        return inner
+    return wrapper
+
+
+def create_admin():
+    if db.users.find_one({"role": "admin"}):
+        print("⚠️ Admin already exists")
+        return
+    
+    admin_user = {
+        "username": "admin",
+        "email": "admin@example.com",
+        "role": "admin",
+        "password_hash": ("admin123"),   # default password
+        "created_at": datetime.now(timezone.utc)
+    }
+    db.users.insert_one(admin_user)
+    print("✅ Admin user created with username=admin, password=admin123")
+
+def login(username, password):
+    global current_user
+    user = db.users.find_one({"username": username})
+    if not user:
+        return {"success": False, "message": "User not found"}
+    
+    # Direct comparison (not secure for prod)
+    if password == user["password"]:
+        current_user = user
+        return {"success": True, "role": user["role"], "message": f"Welcome {username}"}
+    
+    return {"success": False, "message": "Invalid password"}
+
+
+def logout():
+    global current_user
+    current_user = None
+    return "👋 Logged out"
+
+
+
+
+

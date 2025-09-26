@@ -1,6 +1,5 @@
 
-from datetime import datetime
-
+from datetime import datetime, timezone
 from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
 
@@ -38,6 +37,7 @@ dummy_user = {
 }
 u_id = db.users.insert_one(dummy_user).inserted_id
 db.users.delete_one({"_id": u_id})
+
 
 # ----------------- CONTRACTS TEMPLATE (Rich JSON) -----------------
 dummy_contract = {
