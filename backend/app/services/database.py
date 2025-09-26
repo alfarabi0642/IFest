@@ -33,7 +33,8 @@ dummy_user = {
     "username": "",
     "email": "",
     "role": "",       # expected: admin | doctor | manager
-    "created_at": None
+    "created_at": None,
+    "user_id": ""
 }
 u_id = db.users.insert_one(dummy_user).inserted_id
 db.users.delete_one({"_id": u_id})
