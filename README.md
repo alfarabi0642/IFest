@@ -1,0 +1,1 @@
+The Tesseract installer provided by Chocolatey (setup.bat uses Chocolatey) currently includes only English language. To install other languages, download the respective language pack (.traineddata file) from https://github.com/tesseract-ocr/tessdata/ and place it in C:\Program Files\Tesseract-OCRtessdata (or wherever Tesseract OCR is installed).

@@ -7,6 +7,10 @@ motor==3.7.0
 python-dotenv==1.0.0
 requests==2.31.0
 django==5.0.*
+
+langchain==0.3.27
+pypdf2==3.0.1
+openai==1.109.1
 # Optional:
 # PyMuPDF (fitz) if you want native PDF extraction
 # pip install PyMuPDF==1.22.5
