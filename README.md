@@ -1,5 +1,5 @@
 
-# IntelliContract AI 📄✨
+# ILCSense 📄✨
 
 ILCSense AI is a full-stack web application designed to streamline contract management. It leverages Optical Character Recognition (OCR) to digitize PDF documents and utilizes Large Language Models (LLMs) from Azure OpenAI to perform deep analysis, summarization, and risk assessment. The standout feature is a powerful semantic search capability that allows users to ask natural language questions across their entire contract library.
 
