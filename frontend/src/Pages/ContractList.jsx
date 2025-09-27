@@ -22,6 +22,9 @@ function ContractList() {
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedContractId, setSelectedContractId] = useState(null);
 
+    // --- NEW STATE for UPLOADING ---
+    const [uploadStatus, setUploadStatus] = useState(''); // To show messages like "Uploading..." or "Success!"    
+
     // --- DATA FETCHING ---
     useEffect(() => {
         const fetchContracts = async () => {
@@ -61,6 +64,38 @@ function ContractList() {
     const handleCardClick = (documentId) => setSelectedContractId(documentId);
     const handleCloseDetails = () => setSelectedContractId(null);
 
+       // --- NEW FUNCTION TO HANDLE THE FILE UPLOAD ---
+    const handleFileUpload = async (file) => {
+        if (!file) return;
+
+        // Create a FormData object to send the file
+        const formData = new FormData();
+        formData.append('file', file); // The key 'file' must match the backend's expectation
+
+        try {
+            setUploadStatus('Uploading...');
+            
+            // Make the POST request with Axios
+            const response = await axios.post(`${API_URL}/contracts/upload`, formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            });
+
+            setUploadStatus('Upload successful! Processing in background...');
+
+            // After a few seconds, refresh the contract list to show the new item
+            setTimeout(() => {
+                // You might need a more robust way to refresh, but this is a simple start
+                window.location.reload(); 
+            }, 5000); // Refresh after 5 seconds
+
+        } catch (err) {
+            setUploadStatus('Upload failed. Please try again.');
+            console.error(err);
+        }
+    };
+
     // --- RENDER LOGIC ---
     if (error) return <div className="p-6 text-red-600">{error}</div>;
 
@@ -76,7 +111,7 @@ function ContractList() {
                 <Filters />
                 <div className="flex justify-between">
                     <Sort />
-                    <Add />
+                    <Add onFileSelect={handleFileUpload} />
                 </div>
 
                 <div className="mt-4">
