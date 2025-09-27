@@ -16,7 +16,7 @@ function Card ({logo=defaultLogo,
                 value="IDR 20.000.000"
                 }){
     return (
-        <div className="flex rounded-3xl h-auto border-0 p-5 mt-4 mb-5 mr-106 shadow-indigo-300 shadow-lg" >
+        <div className="bg-secondary/80 flex rounded-3xl h-auto border-0 p-5 mt-4 mb-5 mr-106 shadow-indigo-300 shadow-lg" >
             <div className="bg-blue-100 items-center justify-center h-24 w-24 flex">
                 <img src={logo} alt="Logo Perusahaan" ></img>
             </div>

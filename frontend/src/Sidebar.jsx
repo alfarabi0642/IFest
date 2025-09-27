@@ -30,7 +30,7 @@ function SidebarItem({ item, isActive, onClick }) {
     <div
       onClick={onClick}
       className={`flex items-center mx-2 my-1 p-2 rounded-xl cursor-pointer transition-colors duration-200
-                  ${isActive ? "bg-blue-100 text-blue-600" : "text-gray-600 hover:bg-gray-100"}`}
+                  ${isActive ? "bg-blue-100 text-blue-600 hover:scale-103" : "text-gray-600 hover:bg-gray-100 hover:scale-103"}`}
     >
       <div className="flex items-center justify-center h-10 w-10">
         {isActive ? <IconOn className="w-6 h-6" /> : <IconOff className="w-6 h-6" />}
@@ -45,7 +45,7 @@ function Sidebar() {
   const navigate = useNavigate();
 
   return (
-    <div className="fixed top-0 left-0 h-screen w-[35vh] 
+    <div className="fixed top-0 left-0 h-screen w-[16vw] 
                    flex flex-col shadow-2xl
                    pt-4 bg-white">
       <h1 className="p-2 mt-2 text-center text-[5vh] text-primary font-poppinsbold">ILC<a className="text-black">Sense</a></h1>
@@ -64,7 +64,7 @@ function Sidebar() {
         ))}
       </nav>
 
-      <div className="mt-auto p-2">
+      <div className="mt-auto p-2 hover:scale-102 transition-all duration-75">
         <Profile username="Ishaq Irfan F" role="Contract Manager" />
       </div>
     </div>
