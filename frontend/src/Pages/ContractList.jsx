@@ -10,6 +10,7 @@ import Filters from "../Buttons/Filters.jsx";
 import Card from "../Card.jsx";
 import Add from "../Buttons/Add.jsx";
 import Details from '../Details.jsx';
+import LoadingSpinner from '../components/LoadingSpinner.jsx';
 
 const API_URL = 'http://127.0.0.1:8000';
 
@@ -24,6 +25,9 @@ function ContractList() {
 
     // --- NEW STATE for UPLOADING ---
     const [uploadStatus, setUploadStatus] = useState(''); // To show messages like "Uploading..." or "Success!"    
+
+    // --- 2. ADD NEW STATE FOR UPLOAD ---
+    const [isUploading, setIsUploading] = useState(false);
 
     // --- DATA FETCHING ---
     useEffect(() => {
@@ -73,26 +77,30 @@ function ContractList() {
         formData.append('file', file); // The key 'file' must match the backend's expectation
 
         try {
+            // --- 3. SET UPLOADING STATE ---
+            setIsUploading(true); // Show the loading screen
             setUploadStatus('Uploading...');
             
-            // Make the POST request with Axios
-            const response = await axios.post(`${API_URL}/contracts/upload`, formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data'
-                }
+            await axios.post(`${API_URL}/contracts/upload`, formData, {
+                headers: { 'Content-Type': 'multipart/form-data' }
             });
 
-            setUploadStatus('Upload successful! Processing in background...');
-
-            // After a few seconds, refresh the contract list to show the new item
+            setUploadStatus('Upload successful! Processing...');
+            
+            // Wait for processing and then refresh
             setTimeout(() => {
-                // You might need a more robust way to refresh, but this is a simple start
+                setUploadStatus('');
                 window.location.reload(); 
-            }, 5000); // Refresh after 5 seconds
+            }, 8000); // Increased wait time for backend processing
 
         } catch (err) {
             setUploadStatus('Upload failed. Please try again.');
             console.error(err);
+        } finally {
+            // --- 4. HIDE THE LOADING SCREEN ---
+            // This 'finally' block ensures the spinner is hidden
+            // whether the upload succeeds or fails.
+            setIsUploading(false);
         }
     };
 
@@ -100,6 +108,14 @@ function ContractList() {
     if (error) return <div className="p-6 text-red-600">{error}</div>;
 
     return (
+        <> 
+            {/* --- 5. RENDER THE LOADING OVERLAY --- */}
+            {isUploading && (
+                <div className="fixed inset-0 bg-black bg-opacity-60 flex flex-col items-center justify-center z-50">
+                    <LoadingSpinner />
+                    <p className="text-white text-lg mt-4">Processing your document, please wait...</p>
+                </div>
+            )}
         <div className="mt-5 ml-53 p-6 relative flex">
             <div className="flex-grow">
                 <h1 className="text-2xl font-bold">Contract List</h1>
@@ -147,6 +163,7 @@ function ContractList() {
                 />
             )}
         </div>
+        </>
     );
 }
 

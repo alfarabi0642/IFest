@@ -89,8 +89,9 @@ def analyze_contract_text(contract_text: str, contract_name: str) -> str:
     4. Do not add explanations or extra text outside JSON.
     5. On "ContractValue" only uses Rp, Numbers, and separate thousands (3 digits).
     6. On "ContractPeriod" only uses format <tanggal bulan> - <tanggal bulan>.
-    7. riskCategory is the specific type or nature of the risk (e.g., Financial, Legal, Operational).
-    8. riskLevel is the severity of the risk, color-coded for quick identification. Only filled with "Green" for low risk, "Yellow" for medium risk, and "Red" for high risk
+    7. On "contractLocation" only take the city/town name.
+    8. riskCategory is the specific type or nature of the risk (e.g., Financial, Legal, Operational).
+    9. riskLevel is the severity of the risk, color-coded for quick identification. Only filled with "Green" for low risk, "Yellow" for medium risk, and "Red" for high risk
 
     {json.dumps(SCHEMA_TEMPLATE, indent=2)}
 
