@@ -5,7 +5,9 @@ import Details from "./Details.jsx"
 import HomePage from "./Pages/HomePage.jsx"
 import ContractList from "./Pages/ContractList.jsx"
 import ContractDraft from "./Pages/ContractDraft.jsx"
+import ContractReview from "./Pages/ContractReview.jsx"
 import Login from "./Pages/Login.jsx"
+import ProgressBar from "./ProgressBar.jsx"
 
 
 function App() {
@@ -17,13 +19,14 @@ function App() {
                     <Route path="/" element={<HomePage/>}/>
                     <Route path="/contracts" element={<ContractList/>} />
                     <Route path="/drafts" element={<ContractDraft/>} />
-                    {/*<Route path="/reviews" element={<ContractReview/>} />
-                    <Route path="/notifications" element={<Notification/>} />
+                    <Route path="/reviews" element={<ContractReview/>} />
+                    {/*<Route path="/notifications" element={<Notification/>} />
                     <Route path="/reports" element={<Reports/>} />
                     */}
                 </Routes>
             </div>
-        <Details/>
+
+        {/*<Details/>*/}
         </div>
     );
 
