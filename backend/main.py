@@ -116,6 +116,67 @@ async def get_all_contracts():
             contract['created_at'] = contract['created_at'].isoformat()
     return contracts
 
+# In main.py, replace your search_contracts function with this one
+
+@app.get("/contracts/search")
+async def search_contracts(q: str):
+    """
+    Performs a semantic search across all contracts for a given query.
+    """
+    if not q:
+        raise HTTPException(status_code=400, detail="Query parameter 'q' is required.")
+
+    try:
+        query_vector = embedding_service.get_embedding(q)
+    except Exception as e:
+        print(f"Error getting embedding for query: {e}")
+        raise HTTPException(status_code=500, detail="Could not create embedding for the query.")
+
+    pipeline = [
+        {
+            "$vectorSearch": {
+                "index": "vector_index", # Ensure this name matches your Atlas index
+                "path": "embedding_vector",
+                "queryVector": query_vector,
+                "numCandidates": 150,
+                "limit": 10
+            }
+        },
+        {
+            "$project": {
+                "contract_id": 1,
+                "score": {"$meta": "vectorSearchScore"}
+            }
+        }
+    ]
+
+    # Use 'db' which we imported, not 'database'
+    results = list(db.contract_chunks.aggregate(pipeline))
+    
+    unique_contract_ids = list({res['contract_id'] for res in results})
+
+    if not unique_contract_ids:
+        return []
+
+    projection = {
+        "_id": 1,
+        "created_at": 1,
+        "analysis.contractMetadata": 1,
+        "analysis.contractSummarization": 1,
+    }
+    
+    # Use 'db' here as well
+    matching_contracts = list(db.contracts.find(
+        {"_id": {"$in": unique_contract_ids}},
+        projection
+    ))
+    
+    for contract in matching_contracts:
+        contract["documentId"] = contract.pop("_id")
+        if 'created_at' in contract:
+            contract['created_at'] = contract['created_at'].isoformat()
+            
+    return matching_contracts
 @app.get("/contracts/{document_id}")
 async def get_contract_details(document_id: str):
     """
@@ -197,3 +258,8 @@ async def query_contract(document_id: str, request: QueryRequest):
     answer = resp.choices[0].message.content
     
     return QueryResponse(answer=answer, source_chunks=source_chunks)
+
+# Add this new endpoint to your main.py file
+
+# In main.py
+

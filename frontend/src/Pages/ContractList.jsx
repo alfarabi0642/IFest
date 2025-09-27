@@ -1,3 +1,5 @@
+// src/Pages/ContractList.jsx
+
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
@@ -9,100 +11,105 @@ import Card from "../Card.jsx";
 import Add from "../Buttons/Add.jsx";
 import Details from '../Details.jsx';
 
-const API_URL = 'http://127.0.0.1:8000'; // Your backend URL
+const API_URL = 'http://127.0.0.1:8000';
 
 function ContractList() {
-    // State to hold the list of contracts, loading status, and any errors
-    const [contracts, setContracts] = useState([]);
+    // --- STATE MANAGEMENT ---
+    const [contracts, setContracts] = useState([]); // Initial full list from API
+    const [contractsToDisplay, setContractsToDisplay] = useState([]); // The list currently shown on screen
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-
-    // const handleCardClick = (documentId) => {
-    //     // This log will show when the click handler is called
-    //     console.log('Card clicked! Setting selected ID to:', documentId); 
-    //     setSelectedContractId(documentId);
-    // };
+    const [searchTerm, setSearchTerm] = useState('');
     const [selectedContractId, setSelectedContractId] = useState(null);
-    // This useEffect hook will run once when the component is first rendered
+
+    // --- DATA FETCHING ---
     useEffect(() => {
         const fetchContracts = async () => {
             try {
                 setLoading(true);
-                // The API call to your Python backend's GET /contracts endpoint
                 const response = await axios.get(`${API_URL}/contracts`);
-                setContracts(response.data); // Store the array of contracts in our state
+                setContracts(response.data);
+                setContractsToDisplay(response.data); // Initially, display all contracts
                 setError(null);
             } catch (err) {
-                setError('Failed to fetch contracts. Is the backend server running?');
-                console.error(err);
+                setError('Failed to load initial contracts.');
             } finally {
                 setLoading(false);
             }
         };
-
         fetchContracts();
-    }, []); // The empty array [] ensures this runs only once
-    const handleCardClick = (documentId) => {
-        setSelectedContractId(documentId);
+    }, []);
+
+    // --- EVENT HANDLERS ---
+    const handleSearch = async () => {
+        if (!searchTerm.trim()) {
+            setContractsToDisplay(contracts); // If search is cleared, show the original full list
+            return;
+        }
+        try {
+            setLoading(true); // Show loading indicator for search
+            const response = await axios.get(`${API_URL}/contracts/search`, { params: { q: searchTerm } });
+            setContractsToDisplay(response.data || []); // Update display list with search results
+            setError(null);
+        } catch (err) {
+            setError('Search failed.');
+        } finally {
+            setLoading(false);
+        }
     };
-    // console.log('Current selected ID is:', selectedContractId);
     
+    const handleCardClick = (documentId) => setSelectedContractId(documentId);
+    const handleCloseDetails = () => setSelectedContractId(null);
 
-    const handleCloseDetails = () => {
-        setSelectedContractId(null);
-    };
-    // --- Conditional Rendering ---
-    // Show a loading message while fetching data
-    if (loading) {
-        return <div className="p-6">Loading contracts...</div>;
-    }
-
-    // Show an error message if the API call fails
-    if (error) {
-        return <div className="p-6" style={{ color: 'red' }}>{error}</div>;
-    }
+    // --- RENDER LOGIC ---
+    if (error) return <div className="p-6 text-red-600">{error}</div>;
 
     return (
-        <div className="mt-5 ml-53 p-6 relative">
+        <div className="mt-5 ml-53 p-6 relative flex">
             <div className="flex-grow">
                 <h1 className="text-2xl font-bold">Contract List</h1>
-                <SearchBar />
+                <SearchBar 
+                    searchTerm={searchTerm}
+                    onSearchChange={(e) => setSearchTerm(e.target.value)}
+                    onSearchSubmit={handleSearch}
+                />
                 <Filters />
-                <div className="flex justify-between ">
+                <div className="flex justify-between">
                     <Sort />
                     <Add />
                 </div>
-                
-                {/* --- DYNAMIC CARD LIST --- */}
-                {/* We map over the 'contracts' array from our state. */}
-                {/* For each 'contract' object in the array, we render one <Card /> component. */}
-                
 
-                {contracts.map(contract => (
-                    <Card
-                        key={contract.documentId}
-                        // From contractMetadata
-                        judul_kontrak={contract.analysis?.contractMetadata?.documentTitle}
-                        kategori={contract.analysis?.contractMetadata?.documentType}
-
-                        // From contractSummarization
-                        nama_perusahaan={contract.analysis?.contractSummarization?.parties[0]?.name}
-                        perihal_kontrak={contract.analysis?.contractSummarization?.executiveSummary}
-                        lokasi={contract.analysis?.contractSummarization?.contractLocation}
-                        status={contract.analysis?.contractSummarization?.contractStatus}
-                        periode={contract.analysis?.contractSummarization?.contractPeriod}
-                        value={contract.analysis?.contractSummarization?.contractValue}
-                        // Pass the click handler to each card
-                        onCardClick={() => handleCardClick(contract.documentId)}
-
-                    />
-                ))}
+                <div className="mt-4">
+                    {loading ? (
+                        <p>Loading...</p>
+                    ) : (
+                        contractsToDisplay.length > 0 ? (
+                            contractsToDisplay.map(contract => (
+                                <Card
+                                    key={contract.documentId}
+                                    judul_kontrak={contract.analysis?.contractMetadata?.documentTitle}
+                                    kategori={contract.analysis?.contractMetadata?.documentType}
+                                    nama_perusahaan={contract.analysis?.contractSummarization?.parties[0]?.name}
+                                    perihal_kontrak={contract.analysis?.contractSummarization?.executiveSummary}
+                                    lokasi={contract.analysis?.contractSummarization?.contractLocation}
+                                    status={contract.analysis?.contractSummarization?.contractStatus}
+                                    periode={contract.analysis?.contractSummarization?.contractPeriod}
+                                    value={contract.analysis?.contractSummarization?.contractValue}
+                                    onCardClick={() => handleCardClick(contract.documentId)}
+                                />
+                            ))
+                        ) : (
+                            <p>No contracts found.</p>
+                        )
+                    )}
+                </div>
             </div>
+
             {selectedContractId && (
-                    <Details 
-                        documentId={selectedContractId} 
-                        onClose={handleCloseDetails} 
-                    />
+                <Details 
+                    documentId={selectedContractId} 
+                    onClose={handleCloseDetails} 
+                />
             )}
         </div>
     );
